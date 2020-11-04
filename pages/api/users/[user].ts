@@ -21,11 +21,11 @@ interface LeetCodeResponse {
 }
 
 interface Output {
-  error: null | string;
   ranking: number | string;
   solved: number | string;
   solvedOverTotal: string;
   solvedPercentage: string;
+  error: null | string;
 }
 
 const query = (user: string) =>
@@ -71,19 +71,19 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     )[0].count;
 
     output = {
-      error: null,
       ranking,
       solved,
       solvedOverTotal: `${solved}/${total}`,
       solvedPercentage: `${((solved / total) * 100).toFixed(1)}%`,
+      error: null,
     };
   } catch ({ message }) {
     output = {
-      error: message,
       ranking: genericErrorMessage,
       solved: genericErrorMessage,
       solvedOverTotal: genericErrorMessage,
       solvedPercentage: genericErrorMessage,
+      error: message,
     };
   }
 
