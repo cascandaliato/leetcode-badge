@@ -1,5 +1,5 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
+import { NextApiRequest, NextApiResponse } from "next";
 
 interface LeetCodeCount {
   difficulty: string;
@@ -11,16 +11,16 @@ interface LeetCodeResponse {
     data: {
       allQuestionsCount: LeetCodeCount[];
       matchedUser: {
-        profile: { ranking: number };
-        submitStats: {
-          acSubmissionNum: LeetCodeCount[];
-        };
+        profile: { realName: string; userAvatar: string; ranking: number };
+        submitStats: { acSubmissionNum: LeetCodeCount[] };
       };
     };
   };
 }
 
 interface Output {
+  realName: string;
+  avatarUrl: string;
   ranking: number | string;
   solved: number | string;
   solvedOverTotal: string;
@@ -32,7 +32,7 @@ const query = (user: string) =>
   `{
     "operationName": "getUserProfile",
     "variables": { "username" : "${user}" },
-    "query": "query getUserProfile($username: String!) { allQuestionsCount { difficulty count } matchedUser(username: $username) { profile { starRating ranking } submitStats { acSubmissionNum { difficulty count } } } }"
+    "query": "query getUserProfile($username: String!) { allQuestionsCount { difficulty count } matchedUser(username: $username) { profile { realName userAvatar starRating ranking } submitStats { acSubmissionNum { difficulty count } } } }"
 }`;
 
 const genericErrorMessage =
@@ -60,7 +60,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     if (!data.matchedUser) throw new Error("User not found");
 
-    const ranking = data.matchedUser.profile.ranking;
+    const {
+      realName,
+      userAvatar: avatarUrl,
+      ranking,
+    } = data.matchedUser.profile;
 
     const solved = data.matchedUser.submitStats.acSubmissionNum.filter(
       ({ difficulty }) => difficulty === "All"
@@ -71,6 +75,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     )[0].count;
 
     output = {
+      realName,
+      avatarUrl,
       ranking,
       solved,
       solvedOverTotal: `${solved}/${total}`,
@@ -79,6 +85,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     };
   } catch ({ message }) {
     output = {
+      realName: genericErrorMessage,
+      avatarUrl: genericErrorMessage,
       ranking: genericErrorMessage,
       solved: genericErrorMessage,
       solvedOverTotal: genericErrorMessage,

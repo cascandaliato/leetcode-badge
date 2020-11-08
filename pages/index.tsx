@@ -1,189 +1,179 @@
-import { useEffect, useState, FC } from "react";
-import { Subject } from "rxjs";
+import { faCopy } from "@fortawesome/free-regular-svg-icons";
 import {
-  distinctUntilChanged,
-  filter,
-  debounceTime,
-  switchMap,
-} from "rxjs/operators";
-import axios from "axios";
-import { TextField, Grid, Box, Paper } from "@material-ui/core";
-
-interface Badge {
-  username: string;
-  style: "flat" | "flat-square" | "plastic" | "for-the-badge" | "social";
-  labelColor: string;
-  color: string;
-  label: string;
-  value: "ranking" | "solved" | "solvedOverTotal" | "solvedPercentage";
-  showLogo: boolean;
-  logoColor: string;
-}
+  Box,
+  Grid,
+  Paper,
+  TextField,
+  Typography,
+  useMediaQuery,
+} from "@material-ui/core";
+import Head from "next/head";
+import { FC, useEffect, useState } from "react";
+import { Subject } from "rxjs";
+import BadgeContent from "../components/BadgeContent";
+import BadgeStyle from "../components/BadgeStyle";
+import CopyToClipboard from "../components/CopyToClipboard";
+import Footer from "../components/Footer";
+import { Badge, DEFAULT_BADGE, getMarkdown, getUrl } from "../utils/badge";
+import toValidUsernameObservable from "../utils/observable";
 
 const Home: FC = () => {
   const [username$] = useState(() => new Subject<string>());
   const [usernameInput, setUsernameInput] = useState("");
   const [error, setError] = useState("");
-  const [badge, setBadge] = useState<Badge>({
-    username: "cascandaliato",
-    style: "for-the-badge",
-    labelColor: "black",
-    color: "#ffa116",
-    label: "Solved",
-    value: "solvedOverTotal",
-    showLogo: true,
-    logoColor: "yellow",
-  });
-
-  const getLeetCodeStats = (u: string) => {
-    axios
-      .get(`/api/users/${u}`)
-      .then(({ data: { error: e } }) => e)
-      .then((e) => {
-        if (e) {
-          setError(e);
-        } else {
-          setBadge((b) => ({ ...b, username: u }));
-        }
-      })
-      .catch((e) => setError("Couldn't retrieve user"));
-  };
+  const [badge, setBadge] = useState<Badge>(DEFAULT_BADGE);
+  const screenBigEnough = useMediaQuery("(min-width:650px)");
 
   useEffect(() => {
-    const subscription = username$
-      .pipe(
-        filter((value) => !!value),
-        distinctUntilChanged(),
-        debounceTime(500)
-      )
-      .subscribe(getLeetCodeStats);
+    const subscription = toValidUsernameObservable(
+      username$,
+      setError
+    ).subscribe((username) => setBadge((b) => ({ ...b, username })));
+
     return () => subscription.unsubscribe();
   }, []);
-  //   <Head>
-  //         <title>LeetCode Badge</title>
-  //         <link rel="icon" href="/favicon.ico" />
-  //       </Head>
+
   return (
-    <Grid
-      container
-      spacing={2}
-      direction="column"
-      alignItems="center"
-      justify="center"
-      style={{ minHeight: "100vh" }}
-    >
-      <Paper>
-        <Box p={2}>
-          <Grid item>
-            <TextField
-              id="username"
-              label="Username"
-              variant="outlined"
-              error={!!error}
-              helperText={error}
-              size="small"
-              // required={true}
-              // placeholder="Your LeetCode username"
-              value={usernameInput}
-              onChange={({ target: { value } }) => {
-                setUsernameInput(value);
-                setError("");
-                username$.next(value);
-              }}
-            />
-          </Grid>
-          <Grid item>
-            <img
-              src={`https://img.shields.io/badge/dynamic/json?style=${
-                badge.style
-              }&labelColor=${encodeURIComponent(
-                badge.labelColor
-              )}&color=${encodeURIComponent(
-                badge.color
-              )}&label=${encodeURIComponent(badge.label)}&query=${
-                badge.value
-              }&url=https%3A%2F%2Fleetcode-badge.vercel.app%2Fapi%2Fusers%2F${encodeURIComponent(
-                badge.username
-              )}${
-                badge.showLogo
-                  ? `&logo=leetcode&logoColor=${encodeURIComponent(
-                      badge.logoColor
-                    )}`
-                  : ""
-              }`}
-            />
-          </Grid>
-          <Grid item>
-            <pre>
-              {JSON.stringify({ usernameInput, error, badge }, null, 2)}
-            </pre>
-          </Grid>
-        </Box>
-      </Paper>
-      {/* <footer className={styles.footer}>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <>
+      <Head>
+        <meta
+          name="Description"
+          content="Show your LeetCode ranking or the number of solved problems on a badge."
+        />
+        <title>LeetCode Badge Generator</title>
+        <link rel="icon" href="/favicon.ico" />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="/favicon-32x32.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="/favicon-16x16.png"
+        />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+        />
+      </Head>
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        minHeight="100vh"
+      >
+        <Paper
+          elevation={3}
+          style={{
+            margin: "24px",
+            padding: "24px 24px 8px 24px",
+          }}
+        >
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            mt={1}
           >
-            Powered by{" "}
-            <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-          </a>
-        </footer> */}
-    </Grid>
+            <Typography variant="h4" align="center">
+              LeetCode Badge Generator
+            </Typography>
+          </Box>
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Box
+              mt={4}
+              width={256}
+              minHeight={96}
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              justifyContent="flex-start"
+            >
+              <TextField
+                id="username"
+                label="Your LeetCode username"
+                variant="outlined"
+                error={!!error}
+                helperText={error}
+                size="medium"
+                value={usernameInput}
+                onChange={({ target: { value } }) => {
+                  setUsernameInput(value);
+                  setError("");
+                  username$.next(value);
+                }}
+                fullWidth
+              />
+            </Box>
+            <Box
+              display="flex"
+              flexDirection="row"
+              alignItems="flex-start"
+              justifyContent="space-around"
+              flexWrap="wrap"
+            >
+              <Box
+                minWidth={264}
+                mt={screenBigEnough ? 1 : 2}
+                ml={screenBigEnough ? 2 : 0}
+              >
+                <BadgeContent badge={badge} setBadge={setBadge} />
+              </Box>
+              <Box
+                minWidth={264}
+                mt={screenBigEnough ? 1 : 5}
+                mr={screenBigEnough ? -2 : 0}
+              >
+                <BadgeStyle badge={badge} setBadge={setBadge} />
+              </Box>
+            </Box>
+            <Box
+              mt={4}
+              minHeight={50}
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+            >
+              <img src={getUrl(badge)} alt={badge.username} />
+            </Box>
+            <Grid
+              container
+              spacing={2}
+              justify="center"
+              style={{ marginTop: "8px" }}
+            >
+              <Grid item>
+                <CopyToClipboard
+                  icon={faCopy}
+                  label="Image URL"
+                  textToCopy={getUrl(badge)}
+                />
+              </Grid>
+              <Grid item>
+                <CopyToClipboard
+                  icon={faCopy}
+                  label="Markdown"
+                  textToCopy={getMarkdown(badge)}
+                />
+              </Grid>
+            </Grid>
+            <Box mt={4}>
+              <Footer />
+            </Box>
+          </Box>
+        </Paper>
+      </Box>
+    </>
   );
 };
 
 export default Home;
-
-// Observable.create((observer) => {
-//   const controller = new AbortController();
-//   const signal = controller.signal;
-
-//   fetch(url, { signal })
-//     .then((response) => {
-//       if (response.ok) {
-//         return response.json();
-//       } else {
-//         observer.error("Request failed with status code: " + response.status);
-//       }
-//     })
-//     .then((body) => {
-//       observer.next(body);
-
-//       observer.complete();
-//     })
-//     .catch((err) => {
-//       observer.error(err);
-//     });
-
-//   return () => controller.abort();
-// });
-//------------------------------------------------
-// const CancelToken = axios.CancelToken;
-// const source = CancelToken.source();
-
-// axios
-//   .get("/user/12345", {
-//     cancelToken: source.token,
-//   })
-//   .catch(function (thrown) {
-//     if (axios.isCancel(thrown)) {
-//       console.log("Request canceled", thrown.message);
-//     } else {
-//       // handle error
-//     }
-//   });
-
-// axios.post(
-//   "/user/12345",
-//   {
-//     name: "new name",
-//   },
-//   {
-//     cancelToken: source.token,
-//   }
-// );
-
-// // cancel the request (the message parameter is optional)
-// source.cancel("Operation canceled by the user.");
