@@ -23,9 +23,9 @@ const Footer: FC = () => (
       >
         <Grid item>
           <Link
-            href="https://github.com/cascandaliato/"
+            href="https://github.com/cascandaliato/leetcode-badge"
             color="textPrimary"
-            aria-label="Author's GitHub profile"
+            aria-label="GitHub repository of this project"
           >
             <FontAwesomeIcon icon={faGithub} size="lg" />
           </Link>
@@ -34,7 +34,7 @@ const Footer: FC = () => (
           <Link
             href="https://twitter.com/cascandaliato"
             color="textPrimary"
-            aria-label="Author's Twitter profile"
+            aria-label="Twitter profile of the project author"
           >
             <FontAwesomeIcon icon={faTwitter} size="lg" />
           </Link>

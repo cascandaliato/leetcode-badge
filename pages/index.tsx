@@ -38,7 +38,7 @@ const Home: FC = () => {
       <Head>
         <meta
           name="Description"
-          content="Show your LeetCode ranking or the number of solved problems on a badge."
+          content="Create a badge showing your ranking on LeetCode.com"
         />
         <title>LeetCode Badge Generator</title>
         <link rel="icon" href="/favicon.ico" />
