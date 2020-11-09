@@ -1,3 +1,7 @@
 .main:hover {
   color: #ffa116;
 }
+
+.mouse:focus {
+  outline: none;
+}

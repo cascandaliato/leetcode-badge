@@ -24,6 +24,7 @@ const CopyToClipboard: FC<{
 }> = ({ icon, label, textToCopy }) => {
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const [tooltipText, setTooltipText] = useState(COPY_TO_CLIPBOARD);
+  const [mouseDown, setMouseDown] = useState(true);
   const classes = useDarkStyle();
 
   useEffect(() => {
@@ -32,6 +33,19 @@ const CopyToClipboard: FC<{
     }, 500);
     return () => clearTimeout(tId);
   }, [tooltipOpen]);
+
+  useEffect(() => {
+    const mousedownListener = () => setMouseDown(true);
+    document.addEventListener("mousedown", mousedownListener);
+
+    const keydownListener = () => setMouseDown(false);
+    document.addEventListener("keydown", keydownListener);
+
+    return () => {
+      document.removeEventListener("mousedown", mousedownListener);
+      document.removeEventListener("keydown", keydownListener);
+    };
+  }, []);
 
   return (
     <Tooltip
@@ -43,17 +57,20 @@ const CopyToClipboard: FC<{
       placement="bottom"
       classes={classes}
       arrow
+      enterTouchDelay={0}
+      leaveTouchDelay={1000}
     >
       <Box
         display="flex"
         flexDirection="column"
         justifyContent="center"
         alignItems="center"
-        className={styles.main}
+        className={`${styles.main} ${mouseDown ? styles.mouse : ""}`}
         onClick={() => {
           copy(textToCopy);
           setTooltipText("Copied!");
         }}
+        tabIndex={0}
       >
         <FontAwesomeIcon icon={icon} size="2x" />
         <span style={{ fontWeight: 400 }}>{label}</span>

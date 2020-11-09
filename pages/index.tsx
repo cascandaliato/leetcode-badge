@@ -8,7 +8,7 @@ import {
   useMediaQuery,
 } from "@material-ui/core";
 import Head from "next/head";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { Subject } from "rxjs";
 import BadgeContent from "../components/BadgeContent";
 import BadgeStyle from "../components/BadgeStyle";
@@ -16,12 +16,14 @@ import CopyToClipboard from "../components/CopyToClipboard";
 import Footer from "../components/Footer";
 import { Badge, DEFAULT_BADGE, getMarkdown, getUrl } from "../utils/badge";
 import toValidUsernameObservable from "../utils/observable";
+import useKeepVisible from "../utils/use-keep-visible";
 
 const Home: FC = () => {
   const [username$] = useState(() => new Subject<string>());
   const [usernameInput, setUsernameInput] = useState("");
   const [error, setError] = useState("");
   const [badge, setBadge] = useState<Badge>(DEFAULT_BADGE);
+  const badgeRef = useRef<HTMLImageElement | null>(null);
   const screenBigEnough = useMediaQuery("(min-width:650px)");
 
   useEffect(() => {
@@ -32,6 +34,8 @@ const Home: FC = () => {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  useKeepVisible(badgeRef, 20, 16);
 
   return (
     <>
@@ -99,6 +103,7 @@ const Home: FC = () => {
               justifyContent="flex-start"
             >
               <TextField
+                autoFocus
                 id="username"
                 label="Your LeetCode username"
                 variant="outlined"
@@ -143,7 +148,12 @@ const Home: FC = () => {
               justifyContent="center"
               alignItems="center"
             >
-              <img src={getUrl(badge)} alt={badge.username} />
+              <img
+                ref={badgeRef}
+                src={getUrl(badge)}
+                alt={badge.username}
+                style={{ position: "relative" }}
+              />
             </Box>
             <Grid
               container

@@ -1,4 +1,4 @@
-import CssBaseline from "@material-ui/core/CssBaseline";
+import { CssBaseline } from "@material-ui/core";
 import { AppProps } from "next/app";
 
 const MyApp = ({ Component, pageProps }: AppProps) => (

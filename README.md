@@ -1,30 +1,17 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# ![Project logo](public/favicon-32x32.png) LeetCode Badge Generator ![Project logo](public/favicon-32x32.png)
 
-## Getting Started
+An interface over [Shields.io](https://shields.io/) to facilitate the creation of badges for [LeetCode](https://leetcode.com/) user profiles.
 
-First, run the development server:
+Live at https://leetcode-badge.vercel.app/
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+### My badge
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+[![LeetCode user cascandaliato](https://img.shields.io/badge/dynamic/json?style=for-the-badge&labelColor=black&color=%23ffa116&label=Solved&query=solvedOverTotal&url=https%3A%2F%2Fleetcode-badge.vercel.app%2Fapi%2Fusers%2Fcascandaliato&logo=leetcode&logoColor=yellow)](https://leetcode.com/cascandaliato/)
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+### Technologies used
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/import?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- [Material-UI](https://material-ui.com/)
+- [Next.js](https://nextjs.org/)
+- [React](https://reactjs.org/) hooks
+- [RxJS](https://rxjs.dev/)
+- [TypeScript](https://www.typescriptlang.org/)
