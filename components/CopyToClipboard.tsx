@@ -71,6 +71,7 @@ const CopyToClipboard: FC<{
           setTooltipText("Copied!");
         }}
         tabIndex={0}
+        style={{ cursor: "pointer" }}
       >
         <FontAwesomeIcon icon={icon} size="2x" />
         <span style={{ fontWeight: 400 }}>{label}</span>
