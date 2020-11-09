@@ -1,6 +1,6 @@
 # ![Project logo](public/favicon-32x32.png) LeetCode Badge Generator ![Project logo](public/favicon-32x32.png)
 
-An interface over [Shields.io](https://shields.io/) to facilitate the creation of badges for [LeetCode](https://leetcode.com/) user profiles.
+An interface over [Shields.io](https://shields.io/) to facilitate the creation of badges from [LeetCode](https://leetcode.com/) user profiles.
 
 Live at https://leetcode-badge.vercel.app/
 
