@@ -11,9 +11,11 @@ const Footer: FC = () => (
       alignItems="center"
       justifyContent="center"
     >
-      <Typography variant="caption">
+      <Typography variant="caption" align="center">
         Built on top of <Link href="https://leetcode.com/">LeetCode.com</Link>{" "}
         and <Link href="https://shields.io/">Shields.io</Link>
+        <br />
+        by <Link href="https://cascandaliato.com/">Carmelo Scandaliato</Link>
       </Typography>
       <Grid
         container
