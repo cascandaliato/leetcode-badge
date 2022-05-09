@@ -14,6 +14,7 @@ interface LeetCodeResponse {
         profile: { realName: string; userAvatar: string; ranking: number };
         submitStats: { acSubmissionNum: LeetCodeCount[] };
       };
+      userContestRanking: { rating: string };
     };
   };
 }
@@ -22,17 +23,19 @@ interface Output {
   realName: string;
   avatarUrl: string;
   ranking: number | string;
+  rating: number | string;
   solved: number | string;
   solvedOverTotal: string;
   solvedPercentage: string;
   error: null | string;
 }
 
+
 const query = (user: string) =>
   `{
     "operationName": "getUserProfile",
     "variables": { "username" : "${user}" },
-    "query": "query getUserProfile($username: String!) { allQuestionsCount { difficulty count } matchedUser(username: $username) { profile { realName userAvatar starRating ranking } submitStats { acSubmissionNum { difficulty count } } } }"
+    "query": "query getUserProfile($username: String!) { allQuestionsCount { difficulty count } matchedUser(username: $username) { profile { realName userAvatar starRating ranking } submitStats { acSubmissionNum { difficulty count } } } userContestRanking(username: $username)  {rating} }"
 }`;
 
 const genericErrorMessage =
@@ -74,10 +77,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       ({ difficulty }) => difficulty === "All"
     )[0].count;
 
+    const rating = Math.round(parseFloat(data.userContestRanking.rating));
+
     output = {
       realName,
       avatarUrl,
       ranking,
+      rating,
       solved,
       solvedOverTotal: `${solved}/${total}`,
       solvedPercentage: `${((solved / total) * 100).toFixed(1)}%`,
@@ -88,6 +94,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       realName: genericErrorMessage,
       avatarUrl: genericErrorMessage,
       ranking: genericErrorMessage,
+      rating: genericErrorMessage,
       solved: genericErrorMessage,
       solvedOverTotal: genericErrorMessage,
       solvedPercentage: genericErrorMessage,
@@ -97,4 +104,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   res.setHeader("Content-Type", "application/json");
   res.status(200).json(output);
+  
+  console.log(output);
 };

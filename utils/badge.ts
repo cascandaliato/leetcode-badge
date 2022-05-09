@@ -23,6 +23,12 @@ export const contentPresets = {
     badgeValue: "solvedPercentage",
     badgeValueDisplay: "Solved percentage",
   },
+  "contest-rating": {
+    presetLabel: "Contest rating",
+    badgeLabel: "Rating",
+    badgeValue: "rating",
+    badgeValueDisplay: "Contest rating",
+  },
 } as const;
 
 export const styles = {
@@ -61,6 +67,7 @@ export const DEFAULT_BADGE: Badge = {
   logoColor: "yellow",
 };
 
+// query: "query getUserProfile($username: String!) { allQuestionsCount { difficulty count } matchedUser(username: $username) { profile { realName userAvatar starRating ranking } submitStats { acSubmissionNum { difficulty count } } } }"
 export const getUrl = (badge: Badge): string =>
   `https://img.shields.io/badge/dynamic/json?style=${
     badge.style
@@ -70,7 +77,7 @@ export const getUrl = (badge: Badge): string =>
     badge.label
   )}&query=${
     contentPresets[badge.value].badgeValue
-  }&url=https%3A%2F%2Fleetcode-badge.vercel.app%2Fapi%2Fusers%2F${encodeURIComponent(
+  }&url=https%3A%2F%2Fbadges.xyli.codes%2Fapi%2Fusers%2F${encodeURIComponent(
     badge.username
   )}${
     badge.showLogo
