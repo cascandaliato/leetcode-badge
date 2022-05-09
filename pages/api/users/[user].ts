@@ -77,7 +77,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       ({ difficulty }) => difficulty === "All"
     )[0].count;
 
-    const rating = Math.round(parseFloat(data.userContestRanking.rating));
+    const rating = (data.userContestRanking)? Math.round(parseFloat(data.userContestRanking.rating)):"N/A";
 
     output = {
       realName,
@@ -104,6 +104,4 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   res.setHeader("Content-Type", "application/json");
   res.status(200).json(output);
-  
-  console.log(output);
 };

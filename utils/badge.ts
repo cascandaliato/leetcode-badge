@@ -67,7 +67,6 @@ export const DEFAULT_BADGE: Badge = {
   logoColor: "yellow",
 };
 
-// query: "query getUserProfile($username: String!) { allQuestionsCount { difficulty count } matchedUser(username: $username) { profile { realName userAvatar starRating ranking } submitStats { acSubmissionNum { difficulty count } } } }"
 export const getUrl = (badge: Badge): string =>
   `https://img.shields.io/badge/dynamic/json?style=${
     badge.style
