@@ -10,6 +10,7 @@ interface LeetCodeResponse {
   data: {
     data: {
       allQuestionsCount: LeetCodeCount[];
+      filteredQuestions: LeetCodeCount[];
       matchedUser: {
         profile: { realName: string; userAvatar: string; ranking: number };
         submitStats: { acSubmissionNum: LeetCodeCount[] };
@@ -33,7 +34,6 @@ interface Output {
 
 const query = (user: string) =>
   `{
-    "operationName": "getUserProfile",
     "variables": { "username" : "${user}" },
     "query": "query getUserProfile($username: String!) { allQuestionsCount { difficulty count } matchedUser(username: $username) { profile { realName userAvatar starRating ranking } submitStats { acSubmissionNum { difficulty count } } } userContestRanking(username: $username)  {rating} }"
 }`;
@@ -43,7 +43,7 @@ const genericErrorMessage =
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const {
-    query: { user },
+    query: {user},
   } = req;
 
   let output: Output;
@@ -104,4 +104,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   res.setHeader("Content-Type", "application/json");
   res.status(200).json(output);
+
+  console.log(output);
 };

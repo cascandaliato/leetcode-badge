@@ -102,7 +102,25 @@ const BadgeContent: FC<{
       style={{ marginTop: "24px" }}
       label="Show logo"
     />
+
+<FormControlLabel
+      control={
+        <Checkbox
+          checked={badge.cn}
+          onChange={({ target: { checked: cn} }) =>
+            setBadge((b) => ({ ...b, cn }))
+          }
+          name="cn"
+          color="primary"
+        />
+      }
+      style={{ marginTop: "16px" }}
+      label="leetcode.cn"
+    />
   </FormControl>
+
+
+  
 );
 
 export default BadgeContent;

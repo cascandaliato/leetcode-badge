@@ -52,6 +52,7 @@ export interface Badge {
   label: string;
   value: ContentPresetName;
   showLogo: boolean;
+  cn: boolean;
   logoColor: string;
 }
 
@@ -64,8 +65,10 @@ export const DEFAULT_BADGE: Badge = {
   label: "Solved",
   value: "solved-over-total",
   showLogo: true,
+  cn: false,
   logoColor: "yellow",
 };
+
 
 export const getUrl = (badge: Badge): string =>
   `https://img.shields.io/badge/dynamic/json?style=${
@@ -78,7 +81,7 @@ export const getUrl = (badge: Badge): string =>
     contentPresets[badge.value].badgeValue
   }&url=https%3A%2F%2Fbadges.xyli.codes%2Fapi%2Fusers%2F${encodeURIComponent(
     badge.username
-  )}${
+  )}${badge.cn?"%2Fcn%2F":""}${
     badge.showLogo
       ? `&logo=leetcode&logoColor=${encodeURIComponent(badge.logoColor)}`
       : ""
