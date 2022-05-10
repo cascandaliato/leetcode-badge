@@ -68,19 +68,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   let output: Output;
 
-  console.log(user+" leetcode.cn");
-
   try {
 
-    const usercontestres: contestResponse = await axios.post(
-        "https://leetcode.cn/graphql/noj-go",
-        queryRating(user as string),{
-        headers: {
-            "content-type": "application/json",
-          },
-         }
-        );
-   
+  
     const userprofile: profileResponse = await axios.post(
     "https://leetcode.cn/graphql",
     queryProfile(user as string),
@@ -91,7 +81,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
   );
 
-  console.log(userprofile.data.data);
+  if (!userprofile.data.data.userProfilePublicProfile) throw new Error("User not found");
+
 
   const processResponse:processResponse = await axios.post(
     "https://leetcode-cn.com/graphql",
@@ -101,14 +92,17 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       },
      }
     );
-
-    console.log(processResponse.data.data);
-
-    console.log(usercontestres.data.data.userContestRanking);
-
   
-      
-  if (!userprofile.data.data) throw new Error("User not found");
+
+  const usercontestres: contestResponse = await axios.post(
+    "https://leetcode.cn/graphql/noj-go",
+    queryRating(user as string),{
+    headers: {
+        "content-type": "application/json",
+      },
+     }
+    );
+
 
   const realName = userprofile.data.data.userProfilePublicProfile.profile.realName;
   const avatarUrl = userprofile.data.data.userProfilePublicProfile.profile.userAvatar;
@@ -122,7 +116,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     const total = solved + failed + untouched;
 
-    const rating = usercontestres.data.data.userContestRanking.rating?Math.round(usercontestres.data.data.userContestRanking.rating):"N/A";
+    const rating = usercontestres.data.data.userContestRanking?Math.round(usercontestres.data.data.userContestRanking.rating):"N/A";
 
 
 
@@ -151,6 +145,4 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   res.setHeader("Content-Type", "application/json");
   res.status(200).json(output);
-
-  console.log(output);
 };

@@ -105,5 +105,4 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   res.setHeader("Content-Type", "application/json");
   res.status(200).json(output);
 
-  console.log(output);
 };
