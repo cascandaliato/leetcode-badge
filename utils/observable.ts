@@ -30,9 +30,8 @@ const toValidUsernameObservable = (
             .then(({ data: { error: e } }) => {
               if (e) {
                 onError(e);
-              } else {
-                observer.next(username);
               }
+                observer.next(username);
             })
             .catch((thrown) => {
               if (!axios.isCancel(thrown)) {

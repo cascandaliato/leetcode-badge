@@ -30,7 +30,7 @@ const Home: FC = () => {
     const subscription = toValidUsernameObservable(
       username$,
       setError
-    ).subscribe((username) => setBadge((b) => ({ ...b, username })));
+    ).subscribe((username) => setBadge((b) => ({ ...b, username,})));
 
     return () => subscription.unsubscribe();
   }, []);

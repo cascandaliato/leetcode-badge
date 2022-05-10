@@ -90,4 +90,4 @@ export const getUrl = (badge: Badge): string =>
 export const getMarkdown = (badge: Badge): string =>
   `[![LeetCode user ${badge.username}](${getUrl(
     badge
-  )})](https://leetcode.com/${badge.username}/)`;
+  )})](https://leetcode.${badge.cn?"cn":"com"}/${badge.username}/)`;
