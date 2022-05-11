@@ -1,4 +1,5 @@
-import { faCopy } from "@fortawesome/free-regular-svg-icons";
+import { faMarkdown } from "@fortawesome/free-brands-svg-icons";
+import { faImage } from "@fortawesome/free-regular-svg-icons";
 import {
   Box,
   Grid,
@@ -30,7 +31,7 @@ const Home: FC = () => {
     const subscription = toValidUsernameObservable(
       username$,
       setError
-    ).subscribe((username) => setBadge((b) => ({ ...b, username,})));
+    ).subscribe((username) => setBadge((b) => ({ ...b, username})));
 
     return () => subscription.unsubscribe();
   }, []);
@@ -157,21 +158,22 @@ const Home: FC = () => {
             </Box>
             <Grid
               container
-              spacing={2}
+              spacing={10}
               justify="center"
+              alignItems="flex-end" 
               style={{ marginTop: "8px" }}
             >
               <Grid item>
                 <CopyToClipboard
-                  icon={faCopy}
-                  label="Image URL"
+                  icon={faImage}
+                  label="Copy Image URL"
                   textToCopy={getUrl(badge)}
                 />
               </Grid>
               <Grid item>
                 <CopyToClipboard
-                  icon={faCopy}
-                  label="Markdown"
+                  icon={faMarkdown}
+                  label="Copy Markdown Code"
                   textToCopy={getMarkdown(badge)}
                 />
               </Grid>

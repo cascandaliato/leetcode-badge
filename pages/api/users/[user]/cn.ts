@@ -131,15 +131,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       error: null,
     };
   } catch ({ message }) {
+    let err = "" + message;
     output = {
-      realName: genericErrorMessage,
-      avatarUrl: genericErrorMessage,
-      ranking: genericErrorMessage,
-      rating: genericErrorMessage,
-      solved: genericErrorMessage,
-      solvedOverTotal: genericErrorMessage,
-      solvedPercentage: genericErrorMessage,
-      error: message,
+      realName: err,
+      avatarUrl: err,
+      ranking: err,
+      rating: err,
+      solved: err,
+      solvedOverTotal: err,
+      solvedPercentage: err,
+      error: err,
     };
   }
 
