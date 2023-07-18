@@ -75,7 +75,7 @@ export const DEFAULT_BADGE: Badge = {
   logoColor: "yellow",
 };
 
-const host_url = "leetcode-badge-sigma.vercel.app";
+const host_url = "badge.xyli.tech/";
 
 export const getUrl = (badge: Badge): string =>
   `https://img.shields.io/badge/dynamic/json?style=${

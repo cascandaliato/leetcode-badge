@@ -26,7 +26,6 @@ interface Output {
   ranking: number | string;
   rating: number | string;
   ratingQuantile: string;
-  topPercentage: number | string;
   solved: number | string;
   solvedOverTotal: string;
   solvedPercentage: string;
@@ -89,7 +88,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const ratingQuantile =
       topPercentage === "N/A" || rating === "N/A"
         ? "N/A"
-        : `${rating} (top ${topPercentage}%))`;
+        : `${rating} (top ${topPercentage}%)`;
 
     output = {
       realName,
@@ -97,7 +96,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       ranking,
       rating,
       solved,
-      topPercentage,
       ratingQuantile,
       solvedOverTotal: `${solved}/${total}`,
       solvedPercentage: `${((solved / total) * 100).toFixed(1)}%`,
@@ -111,7 +109,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       ranking: err,
       rating: err,
       solved: err,
-      topPercentage: err,
       solvedOverTotal: err,
       solvedPercentage: err,
       error: err,

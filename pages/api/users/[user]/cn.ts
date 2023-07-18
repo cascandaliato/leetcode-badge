@@ -1,5 +1,6 @@
 import axios from "axios";
 import { NextApiRequest, NextApiResponse } from "next";
+import { parse } from "path";
 
 interface LeetCodeCount {
   difficulty: string;
@@ -32,7 +33,7 @@ interface profileResponse {
 interface contestResponse {
   data: {
     data: {
-      userContestRanking: { rating: number };
+      userContestRanking: { rating: number; topPercentage: string };
     };
   };
 }
@@ -46,6 +47,7 @@ interface Output {
   solvedOverTotal: string;
   solvedPercentage: string;
   error: null | string;
+  ratingQuantile: string;
 }
 
 const queryProfile = (user: string) =>
@@ -61,7 +63,7 @@ const queryProcess = (user: string) =>
 
 const queryRating = (user: string) =>
   `{"variables": { "userSlug" : "${user}" }, 
- "query": "query userContestRankingInfo($userSlug: String!) { userContestRanking(userSlug: $userSlug) {rating}}" 
+ "query": "query userContestRankingInfo($userSlug: String!) { userContestRanking(userSlug: $userSlug) {rating topPercentage}}" 
 }`;
 
 const genericErrorMessage =
@@ -135,6 +137,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       ? Math.round(usercontestres.data.data.userContestRanking.rating)
       : "N/A";
 
+    const topPercentage = usercontestres.data.data.userContestRanking
+      ? parseFloat(usercontestres.data.data.userContestRanking.topPercentage)
+      : "N/A";
+
+    const ratingQuantile =
+      rating === "N/A" || topPercentage === "N/A"
+        ? "N/A"
+        : `${rating} (${topPercentage})`;
+
     output = {
       realName,
       avatarUrl,
@@ -144,9 +155,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       solvedOverTotal: `${solved}/${total}`,
       solvedPercentage: `${((solved / total) * 100).toFixed(1)}%`,
       error: null,
+      ratingQuantile,
     };
-  } catch ({ message }) {
-    let err = "" + message;
+  } catch (e) {
+    let err = (e as Error).message;
     output = {
       realName: err,
       avatarUrl: err,
@@ -156,6 +168,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       solvedOverTotal: err,
       solvedPercentage: err,
       error: err,
+      ratingQuantile: err,
     };
   }
 
