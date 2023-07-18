@@ -7,27 +7,34 @@ interface LeetCodeCount {
 }
 
 interface processResponse {
+  data: {
     data: {
-    data: {
-        userProfileUserQuestionProgress: {numAcceptedQuestions: LeetCodeCount[], numFailedQuestions: LeetCodeCount[], numUntouchedQuestions: LeetCodeCount[]};
+      userProfileUserQuestionProgress: {
+        numAcceptedQuestions: LeetCodeCount[];
+        numFailedQuestions: LeetCodeCount[];
+        numUntouchedQuestions: LeetCodeCount[];
+      };
     };
-};
+  };
 }
 
 interface profileResponse {
+  data: {
     data: {
-    data: {
-        userProfilePublicProfile: {  siteRanking: number, profile: { userSlug: string, realName: string, userAvatar:string} };
+      userProfilePublicProfile: {
+        siteRanking: number;
+        profile: { userSlug: string; realName: string; userAvatar: string };
+      };
     };
-};
+  };
 }
 
 interface contestResponse {
+  data: {
     data: {
-    data: {
-        userContestRanking: { rating: number };
+      userContestRanking: { rating: number };
     };
-};
+  };
 }
 
 interface Output {
@@ -42,19 +49,18 @@ interface Output {
 }
 
 const queryProfile = (user: string) =>
-`{
+  `{
     "variables": { "userSlug" : "${user}" },
     "query": "query userProfilePublicProfile($userSlug: String!) { userProfilePublicProfile(userSlug: $userSlug) { siteRanking profile { userSlug realName userAvatar} }}"
 }`;
-
 
 const queryProcess = (user: string) =>
   `{"variables": { "userSlug" : "${user}" },
     "query": "query userQuestionProgress($userSlug: String!) { userProfileUserQuestionProgress(userSlug: $userSlug) { numAcceptedQuestions { difficulty count } numFailedQuestions { difficulty count }numUntouchedQuestions { difficulty count } }}"
 }`;
 
-const queryRating = (user: string) => 
-`{"variables": { "userSlug" : "${user}" }, 
+const queryRating = (user: string) =>
+  `{"variables": { "userSlug" : "${user}" }, 
  "query": "query userContestRankingInfo($userSlug: String!) { userContestRanking(userSlug: $userSlug) {rating}}" 
 }`;
 
@@ -63,62 +69,71 @@ const genericErrorMessage =
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const {
-    query: { user},
+    query: { user },
   } = req;
 
   let output: Output;
 
   try {
-
-  
     const userprofile: profileResponse = await axios.post(
-    "https://leetcode.cn/graphql",
-    queryProfile(user as string),
-    {
-      headers: {
-        "content-type": "application/json",
-      },
-    }
-  );
-
-  if (!userprofile.data.data.userProfilePublicProfile) throw new Error("User not found");
-
-
-  const processResponse:processResponse = await axios.post(
-    "https://leetcode-cn.com/graphql",
-    queryProcess(user as string),{
-    headers: {
-        "content-type": "application/json",
-      },
-     }
-    );
-  
-
-  const usercontestres: contestResponse = await axios.post(
-    "https://leetcode.cn/graphql/noj-go",
-    queryRating(user as string),{
-    headers: {
-        "content-type": "application/json",
-      },
-     }
+      "https://leetcode.cn/graphql",
+      queryProfile(user as string),
+      {
+        headers: {
+          "content-type": "application/json",
+        },
+      }
     );
 
+    if (!userprofile.data.data.userProfilePublicProfile)
+      throw new Error("User not found");
 
-  const realName = userprofile.data.data.userProfilePublicProfile.profile.realName;
-  const avatarUrl = userprofile.data.data.userProfilePublicProfile.profile.userAvatar;
-  const ranking = userprofile.data.data.userProfilePublicProfile.siteRanking;
+    const processResponse: processResponse = await axios.post(
+      "https://leetcode-cn.com/graphql",
+      queryProcess(user as string),
+      {
+        headers: {
+          "content-type": "application/json",
+        },
+      }
+    );
 
-    const solved = processResponse.data.data.userProfileUserQuestionProgress.numAcceptedQuestions.reduce((sum, item) => sum + item.count, 0);
+    const usercontestres: contestResponse = await axios.post(
+      "https://leetcode.cn/graphql/noj-go",
+      queryRating(user as string),
+      {
+        headers: {
+          "content-type": "application/json",
+        },
+      }
+    );
 
-    const failed = processResponse.data.data.userProfileUserQuestionProgress.numFailedQuestions.reduce((sum, item) => sum + item.count, 0);
+    const realName =
+      userprofile.data.data.userProfilePublicProfile.profile.realName;
+    const avatarUrl =
+      userprofile.data.data.userProfilePublicProfile.profile.userAvatar;
+    const ranking = userprofile.data.data.userProfilePublicProfile.siteRanking;
 
-    const untouched = processResponse.data.data.userProfileUserQuestionProgress.numUntouchedQuestions.reduce((sum, item) => sum + item.count, 0);
+    const solved = processResponse.data.data.userProfileUserQuestionProgress.numAcceptedQuestions.reduce(
+      (sum, item) => sum + item.count,
+      0
+    );
+
+    const failed = processResponse.data.data.userProfileUserQuestionProgress.numFailedQuestions.reduce(
+      (sum, item) => sum + item.count,
+      0
+    );
+
+    const untouched = processResponse.data.data.userProfileUserQuestionProgress.numUntouchedQuestions.reduce(
+      (sum, item) => sum + item.count,
+      0
+    );
 
     const total = solved + failed + untouched;
 
-    const rating = usercontestres.data.data.userContestRanking?Math.round(usercontestres.data.data.userContestRanking.rating):"N/A";
-
-
+    const rating = usercontestres.data.data.userContestRanking
+      ? Math.round(usercontestres.data.data.userContestRanking.rating)
+      : "N/A";
 
     output = {
       realName,

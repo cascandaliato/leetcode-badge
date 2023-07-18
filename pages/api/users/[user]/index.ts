@@ -15,7 +15,7 @@ interface LeetCodeResponse {
         profile: { realName: string; userAvatar: string; ranking: number };
         submitStats: { acSubmissionNum: LeetCodeCount[] };
       };
-      userContestRanking: { rating: string };
+      userContestRanking: { rating: string; topPercentage: string };
     };
   };
 }
@@ -25,17 +25,18 @@ interface Output {
   avatarUrl: string;
   ranking: number | string;
   rating: number | string;
+  ratingQuantile: string;
+  topPercentage: number | string;
   solved: number | string;
   solvedOverTotal: string;
   solvedPercentage: string;
   error: null | string;
 }
 
-
 const query = (user: string) =>
   `{
     "variables": { "username" : "${user}" },
-    "query": "query getUserProfile($username: String!) { allQuestionsCount { difficulty count } matchedUser(username: $username) { profile { realName userAvatar starRating ranking } submitStats { acSubmissionNum { difficulty count } } } userContestRanking(username: $username)  {rating} }"
+    "query": "query getUserProfile($username: String!) { allQuestionsCount { difficulty count } matchedUser(username: $username) { profile { realName userAvatar starRating ranking } submitStats { acSubmissionNum { difficulty count } } } userContestRanking(username: $username)  {rating topPercentage} }"
 }`;
 
 const genericErrorMessage =
@@ -43,7 +44,7 @@ const genericErrorMessage =
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const {
-    query: {user},
+    query: { user },
   } = req;
 
   let output: Output;
@@ -77,7 +78,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       ({ difficulty }) => difficulty === "All"
     )[0].count;
 
-    const rating = (data.userContestRanking)? Math.round(parseFloat(data.userContestRanking.rating)):"N/A";
+    const rating = data.userContestRanking
+      ? Math.round(parseFloat(data.userContestRanking.rating))
+      : "N/A";
+
+    const topPercentage = data.userContestRanking
+      ? parseFloat(data.userContestRanking.topPercentage)
+      : "N/A";
+
+    const ratingQuantile =
+      topPercentage === "N/A" || rating === "N/A"
+        ? "N/A"
+        : `${rating} (top ${topPercentage}%))`;
 
     output = {
       realName,
@@ -85,25 +97,28 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       ranking,
       rating,
       solved,
+      topPercentage,
+      ratingQuantile,
       solvedOverTotal: `${solved}/${total}`,
       solvedPercentage: `${((solved / total) * 100).toFixed(1)}%`,
       error: null,
     };
-  } catch ({ message }) {
-    let err = "" + message;
+  } catch (e) {
+    let err = (e as Error).message;
     output = {
       realName: err,
       avatarUrl: err,
       ranking: err,
       rating: err,
       solved: err,
+      topPercentage: err,
       solvedOverTotal: err,
       solvedPercentage: err,
       error: err,
+      ratingQuantile: err,
     };
   }
 
   res.setHeader("Content-Type", "application/json");
   res.status(200).json(output);
-
 };

@@ -6,7 +6,9 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Switch,
   TextField,
+  Grid,
 } from "@material-ui/core";
 import { Dispatch, FC, SetStateAction } from "react";
 import { Badge, ContentPresetName, contentPresets } from "../utils/badge";
@@ -102,25 +104,7 @@ const BadgeContent: FC<{
       style={{ marginTop: "24px" }}
       label="Show logo"
     />
-
-<FormControlLabel
-      control={
-        <Checkbox
-          checked={badge.cn}
-          onChange={({ target: { checked: cn} }) =>
-            setBadge((b) => ({ ...b, cn }))
-          }
-          name="cn"
-          color="primary"
-        />
-      }
-      style={{ marginTop: "16px" }}
-      label="leetcode.cn"
-    />
   </FormControl>
-
-
-  
 );
 
 export default BadgeContent;
