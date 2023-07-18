@@ -144,7 +144,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const ratingQuantile =
       rating === "N/A" || topPercentage === "N/A"
         ? "N/A"
-        : `${rating} (${topPercentage})`;
+        : `${rating} (top ${topPercentage}%)`;
 
     output = {
       realName,
