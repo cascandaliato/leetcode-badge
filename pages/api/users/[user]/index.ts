@@ -10,10 +10,12 @@ interface LeetCodeResponse {
   data: {
     data: {
       allQuestionsCount: LeetCodeCount[];
+      filteredQuestions: LeetCodeCount[];
       matchedUser: {
         profile: { realName: string; userAvatar: string; ranking: number };
         submitStats: { acSubmissionNum: LeetCodeCount[] };
       };
+      userContestRanking: { rating: string; topPercentage: string };
     };
   };
 }
@@ -22,6 +24,8 @@ interface Output {
   realName: string;
   avatarUrl: string;
   ranking: number | string;
+  rating: number | string;
+  ratingQuantile: string;
   solved: number | string;
   solvedOverTotal: string;
   solvedPercentage: string;
@@ -30,9 +34,8 @@ interface Output {
 
 const query = (user: string) =>
   `{
-    "operationName": "getUserProfile",
     "variables": { "username" : "${user}" },
-    "query": "query getUserProfile($username: String!) { allQuestionsCount { difficulty count } matchedUser(username: $username) { profile { realName userAvatar starRating ranking } submitStats { acSubmissionNum { difficulty count } } } }"
+    "query": "query getUserProfile($username: String!) { allQuestionsCount { difficulty count } matchedUser(username: $username) { profile { realName userAvatar starRating ranking } submitStats { acSubmissionNum { difficulty count } } } userContestRanking(username: $username)  {rating topPercentage} }"
 }`;
 
 const genericErrorMessage =
@@ -74,24 +77,42 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       ({ difficulty }) => difficulty === "All"
     )[0].count;
 
+    const rating = data.userContestRanking
+      ? Math.round(parseFloat(data.userContestRanking.rating))
+      : "N/A";
+
+    const topPercentage = data.userContestRanking
+      ? parseFloat(data.userContestRanking.topPercentage)
+      : "N/A";
+
+    const ratingQuantile =
+      topPercentage === "N/A" || rating === "N/A"
+        ? "N/A"
+        : `${rating} (top ${topPercentage}%)`;
+
     output = {
       realName,
       avatarUrl,
       ranking,
+      rating,
       solved,
+      ratingQuantile,
       solvedOverTotal: `${solved}/${total}`,
       solvedPercentage: `${((solved / total) * 100).toFixed(1)}%`,
       error: null,
     };
-  } catch ({ message }) {
+  } catch (e) {
+    let err = (e as Error).message;
     output = {
-      realName: genericErrorMessage,
-      avatarUrl: genericErrorMessage,
-      ranking: genericErrorMessage,
-      solved: genericErrorMessage,
-      solvedOverTotal: genericErrorMessage,
-      solvedPercentage: genericErrorMessage,
-      error: message,
+      realName: err,
+      avatarUrl: err,
+      ranking: err,
+      rating: err,
+      solved: err,
+      solvedOverTotal: err,
+      solvedPercentage: err,
+      error: err,
+      ratingQuantile: err,
     };
   }
 

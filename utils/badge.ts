@@ -23,6 +23,18 @@ export const contentPresets = {
     badgeValue: "solvedPercentage",
     badgeValueDisplay: "Solved percentage",
   },
+  "contest-rating": {
+    presetLabel: "Contest rating",
+    badgeLabel: "Rating",
+    badgeValue: "rating",
+    badgeValueDisplay: "Contest rating",
+  },
+  "contest-rating-quantile": {
+    presetLabel: "Contest rating & quantile",
+    badgeLabel: "Rating",
+    badgeValue: "ratingQuantile",
+    badgeValueDisplay: "Contest rating & quantile",
+  },
 } as const;
 
 export const styles = {
@@ -46,6 +58,7 @@ export interface Badge {
   label: string;
   value: ContentPresetName;
   showLogo: boolean;
+  cn: boolean;
   logoColor: string;
 }
 
@@ -58,8 +71,11 @@ export const DEFAULT_BADGE: Badge = {
   label: "Solved",
   value: "solved-over-total",
   showLogo: true,
+  cn: false,
   logoColor: "yellow",
 };
+
+const host_url = "badge.xyli.tech/";
 
 export const getUrl = (badge: Badge): string =>
   `https://img.shields.io/badge/dynamic/json?style=${
@@ -70,15 +86,15 @@ export const getUrl = (badge: Badge): string =>
     badge.label
   )}&query=${
     contentPresets[badge.value].badgeValue
-  }&url=https%3A%2F%2Fleetcode-badge.vercel.app%2Fapi%2Fusers%2F${encodeURIComponent(
+  }&url=https%3A%2F%2F${host_url}%2Fapi%2Fusers%2F${encodeURIComponent(
     badge.username
-  )}${
+  )}${badge.cn ? "%2Fcn%2F" : ""}${
     badge.showLogo
       ? `&logo=leetcode&logoColor=${encodeURIComponent(badge.logoColor)}`
       : ""
   }`;
 
 export const getMarkdown = (badge: Badge): string =>
-  `[![LeetCode user ${badge.username}](${getUrl(
-    badge
-  )})](https://leetcode.com/${badge.username}/)`;
+  `[![LeetCode user ${badge.username}](${getUrl(badge)})](https://leetcode.${
+    badge.cn ? "cn" : "com"
+  }/${badge.username}/)`;

@@ -1,4 +1,5 @@
-import { faCopy } from "@fortawesome/free-regular-svg-icons";
+import { faMarkdown } from "@fortawesome/free-brands-svg-icons";
+import { faImage } from "@fortawesome/free-regular-svg-icons";
 import {
   Box,
   Grid,
@@ -6,6 +7,9 @@ import {
   TextField,
   Typography,
   useMediaQuery,
+  FormControlLabel,
+  FormControl,
+  Switch,
 } from "@material-ui/core";
 import Head from "next/head";
 import { FC, useEffect, useRef, useState } from "react";
@@ -95,10 +99,10 @@ const Home: FC = () => {
           >
             <Box
               mt={4}
-              width={256}
+              width={"100%"}
               minHeight={96}
               display="flex"
-              flexDirection="column"
+              flexDirection="row"
               alignItems="center"
               justifyContent="flex-start"
             >
@@ -118,6 +122,33 @@ const Home: FC = () => {
                 }}
                 fullWidth
               />
+              <Box width="60%">
+                <FormControl>
+                  <FormControlLabel
+                    control={
+                      <Grid
+                        component="label"
+                        container
+                        alignItems="center"
+                        style={{ fontFamily: "monospace" }}
+                      >
+                        <Grid item>.com</Grid>
+                        <Grid item>
+                          <Switch
+                            checked={badge.cn}
+                            onChange={(e) =>
+                              setBadge((b) => ({ ...b, cn: e.target.checked }))
+                            }
+                          ></Switch>
+                        </Grid>
+                        <Grid item>.cn</Grid>
+                      </Grid>
+                    }
+                    label="Site"
+                    labelPlacement="top"
+                  />
+                </FormControl>
+              </Box>
             </Box>
             <Box
               display="flex"
@@ -155,23 +186,25 @@ const Home: FC = () => {
                 style={{ position: "relative" }}
               />
             </Box>
+
             <Grid
               container
-              spacing={2}
+              spacing={4}
               justify="center"
+              alignItems="flex-end"
               style={{ marginTop: "8px" }}
             >
-              <Grid item>
+              <Grid item md={4} xs={4}>
                 <CopyToClipboard
-                  icon={faCopy}
-                  label="Image URL"
+                  icon={faImage}
+                  label="Copy Image URL"
                   textToCopy={getUrl(badge)}
                 />
               </Grid>
-              <Grid item>
+              <Grid item md={4} xs={4}>
                 <CopyToClipboard
-                  icon={faCopy}
-                  label="Markdown"
+                  icon={faMarkdown}
+                  label="Copy Markdown Code"
                   textToCopy={getMarkdown(badge)}
                 />
               </Grid>
