@@ -16,4 +16,6 @@ Live at https://leetcode-badge.vercel.app/
 - [RxJS](https://rxjs.dev/)
 - [TypeScript](https://www.typescriptlang.org/)
 
-[![LeetCode user cascandaliato](https://img.shields.io/badge/dynamic/json?style=for-the-badge&labelColor=black&color=%23ffa116&label=Solved&query=solvedOverTotal&url=https%3A%2F%2Flocalhost:3000%2Fapi%2Fusers%2Fcascandaliato&logo=leetcode&logoColor=yellow)](https://leetcode.com/cascandaliato/)
+### Credits
+
+- @[li-xin-yi](https://github.com/li-xin-yi): Contest Rating display preset and support for LeetCode China
