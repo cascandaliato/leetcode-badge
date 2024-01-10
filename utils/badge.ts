@@ -75,8 +75,6 @@ export const DEFAULT_BADGE: Badge = {
   logoColor: "yellow",
 };
 
-const host_url = "badge.xyli.tech/";
-
 export const getUrl = (badge: Badge): string =>
   `https://img.shields.io/badge/dynamic/json?style=${
     badge.style
@@ -86,7 +84,7 @@ export const getUrl = (badge: Badge): string =>
     badge.label
   )}&query=${
     contentPresets[badge.value].badgeValue
-  }&url=https%3A%2F%2F${host_url}%2Fapi%2Fusers%2F${encodeURIComponent(
+  }&url=https%3A%2F%2Fleetcode-badge.vercel.app%2Fapi%2Fusers%2F${encodeURIComponent(
     badge.username
   )}${badge.cn ? "%2Fcn%2F" : ""}${
     badge.showLogo
