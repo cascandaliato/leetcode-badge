@@ -91,7 +91,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       throw new Error("User not found");
 
     const processResponse: processResponse = await axios.post(
-      "https://leetcode-cn.com/graphql",
+      "https://leetcode.cn/graphql",
       queryProcess(user as string),
       {
         headers: {
