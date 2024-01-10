@@ -24,7 +24,7 @@ const toValidUsernameObservable = (
         new Observable<string>((observer) => {
           const source = axios.CancelToken.source();
           axios
-            .get<ApiAnswer>(`/api/users/${username}}`, {
+            .get<ApiAnswer>(`/api/users/${username}`, {
               cancelToken: source.token,
             })
             .then(({ data: { error: e } }) => {
